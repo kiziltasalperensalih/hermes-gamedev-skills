@@ -27,9 +27,10 @@ The brief is the contract the self-check verifies against.
 
 ## Phase 2 — Scaffold
 
-Copy hermes/templates/web-game/ into a new project directory. Adapt
-index.html and game.js to the brief. Zero build step: engine via CDN,
-plain files, open index.html and it runs.
+Copy hermes/templates/web-game/ into a new project directory, excluding
+node_modules/ and check-out/ (local artifacts, not template files).
+Adapt index.html and game.js to the brief. Zero build step: engine via
+CDN, plain files, open index.html and it runs.
 
 ## Phase 3 — Build
 
@@ -40,6 +41,10 @@ win/lose, spawn rules): failing test first, then minimal code. Keep the
 game exposing window.game so checks can force states.
 
 ## Phase 4 — Self-check (local, headless, repeatable)
+
+Prerequisite (once per game dir): run `npm install` in the game dir, and
+`npx playwright install chromium` if Chromium is not present — check.mjs
+imports playwright from the game dir's node_modules.
 
 1. Write check-flow.mjs in the game dir: default export
    `async (page, shot) => { ... }` scripting the brief's core flow with

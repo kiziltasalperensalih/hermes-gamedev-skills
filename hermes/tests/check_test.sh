@@ -54,4 +54,26 @@ elapsed=$((SECONDS - start))
 [ "$elapsed" -lt 60 ] || fail "missing-browser run took ${elapsed}s (must fail fast)"
 grep -qiE "launch|chromium|executable" "$TMP/d.log" || fail "no clear launch-error message: $(cat "$TMP/d.log")"
 
-echo "PASS: check_test (clean sample, error capture exit 1, no-flow fallback, missing-browser fast fail)"
+# (e) malformed-URI request must not crash the check; report still produced
+mkdir -p "$TMP/e"
+echo '<!doctype html><html><body><h1>ok</h1></body></html>' > "$TMP/e/index.html"
+cat > "$TMP/e/check-flow.mjs" <<'EOF'
+import http from 'node:http';
+export default async (page, shot) => {
+  const u = new URL(page.url());
+  await new Promise((resolve) => {
+    const req = http.request({ host: u.hostname, port: u.port, path: '/%' }, (res) => {
+      res.resume(); res.on('end', resolve);
+    });
+    req.on('error', resolve);
+    req.end();
+  });
+};
+EOF
+node "$CHECK" "$TMP/e" "$TMP/eout" >"$TMP/e.log" 2>&1
+rc=$?
+[ "$rc" -eq 0 ] || fail "malformed-URI run expected exit 0, got $rc: $(tail -3 "$TMP/e.log")"
+[ -f "$TMP/eout/report.json" ] || fail "no report.json after malformed-URI request (check crashed)"
+grep -q '"final"' "$TMP/eout/report.json" || fail "flow aborted before final screenshot"
+
+echo "PASS: check_test (clean sample, error capture exit 1, no-flow fallback, missing-browser fast fail, malformed-URI survival)"

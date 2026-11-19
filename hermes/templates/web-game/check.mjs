@@ -26,7 +26,12 @@ const MIME = {
   '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.ico': 'image/x-icon',
 };
 const server = http.createServer((req, res) => {
-  let p = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+  let p;
+  try {
+    p = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+  } catch {
+    res.writeHead(400); res.end('bad request'); return;
+  }
   if (p === '/') p = '/index.html';
   const f = path.join(root, p);
   if (!f.startsWith(root) || !fs.existsSync(f) || !fs.statSync(f).isFile()) {
