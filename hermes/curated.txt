@@ -1,0 +1,10 @@
+skills/web-engines/phaser-core
+skills/web-engines/phaser-arcade-physics
+skills/web-engines/pixijs-rendering
+skills/web-engines/threejs-scene-setup
+skills/web-engines/threejs-materials-lighting
+skills/web-engines/threejs-gltf-loading
+skills/disciplines/game-feel
+skills/workflows/prototype-fast
+skills/workflows/game-jam
+skills/workflows/itch-publish
