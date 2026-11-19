@@ -1,0 +1,1 @@
+{"name": "web-game-template", "private": true, "type": "module", "description": "Zero-build web game template with local headless self-check (check.mjs).", "devDependencies": {"playwright": "^1.65.1"}}
